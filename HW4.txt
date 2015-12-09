@@ -1,0 +1,17 @@
+use todos
+
+db.tasks.insert({"title": "Do homework", "priority": 6, "years": 1, "impact": 6, "people": 1, "about": "uni", "description": "Write your Mongo HW."})
+db.tasks.insert({"title": "Cure cancer", "priority": 5, "years": 5, "impact": 6, "people": 10, "about": "world", "description": "Find a method to cure cancer."})
+db.tasks.insert({"title": "solve P = NP", "priority": 3, "years": 1, "impact": 5, "people": 3, "about": "world", "description": "Become a genius and solve the problem."})
+db.tasks.insert({"title": "Go to the toilet", "priority": 1, "years": 1, "impact": -3, "people": 1, "about": "personal", "description": "Do your personal job, which can have amazingly negative impact on others."})
+db.tasks.insert({"title": "Finish university", "priority": 4, "years": 4, "impact": 3, "people": 1, "about": "uni", "description": "You can do it!"})
+db.tasks.insert({"title": "Become a president", "priority": 2, "years": 2, "impact": 2, "people": 1, "about": "uni", "description": "Become a president of a student organization."})
+
+db.tasks.ensureIndex({"title": 1, "priority": 1}) // Index_1
+db.tasks.ensureIndex({"priority": 1}) // Index_2
+db.tasks.ensureIndex({"years": 1, "impact": -1, "people": 1}) // Index_3
+
+db.tasks.find({"title": "Do homework"}) // Uses Index_1
+db.tasks.find({"priority": 5}).skip(5) // Uses Index_2
+db.tasks.find({"title": "Cure cancer", "priority": 6}) // Uses Index_1
+db.tasks.find({"years": {$gt: 3}, "impact": {$lt: 5}}).count() // Uses Index_3
