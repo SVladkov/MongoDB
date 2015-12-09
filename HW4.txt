@@ -10,8 +10,21 @@ db.tasks.insert({"title": "Become a president", "priority": 2, "years": 2, "impa
 db.tasks.ensureIndex({"title": 1, "priority": 1}) // Index_1
 db.tasks.ensureIndex({"priority": 1}) // Index_2
 db.tasks.ensureIndex({"years": 1, "impact": -1, "people": 1}) // Index_3
+db.tasks.ensureIndex({"title": "text", "about": "text", "descriprion": "text"}) // Index_4
+db.tasks.ensureIndex({"impact": -1, "years": 1}) // Index_5
 
 db.tasks.find({"title": "Do homework"}) // Uses Index_1
 db.tasks.find({"priority": 5}).skip(5) // Uses Index_2
 db.tasks.find({"title": "Cure cancer", "priority": 6}) // Uses Index_1
 db.tasks.find({"years": {$gt: 3}, "impact": {$lt: 5}}).count() // Uses Index_3
+db.tasks.find({"years": {$gt: 3}}).sort({"impact": -1}) // Uses Index_3
+db.tasks.find({"years": 4, "impact": -3, "people": 2}) // Uses Index_3
+db.tasks.find({$or: [
+{"title": "solve P = NP", "priority": 3},
+{"years": 2, "impact": {$gte: 4}, "people": 1}
+]}) // Uses Index_3
+db.tasks.find({$text: {$search: "world"}}) // Uses Index_4
+db.tasks.find({}).sort({"years": 1, "impact": -1}) // Uses Index_3
+db.tasks.find({}).sort({"impact": -1, "years": 1}) // Uses Index_5
+db.tasks.find({}).sort({"years": -1, "impact": 1}) // Uses Index_3
+
