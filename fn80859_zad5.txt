@@ -1,0 +1,78 @@
+use donation 
+
+db.donation.insert({
+	name: "Donation 5km Run", 
+	location: "Plovdiv", 
+	distances: [
+		{length: 5, category: "women", participants: 52, winners: ["Gergana", "Tanya"]}, 
+		{length: 5, category: "men", participants: 67, winners: ["Boyan"]}, 
+		{length: 2, category: "kids", participants: 28, winners: ["Stoyan"]}
+		],
+	donationPerKm: 1.5,
+	sponsor: "The Sponsor",
+})
+
+db.donation.insert({
+	name: "Donation race", 
+	location: "Sofia", 
+	distances: [
+		{length: 3, category: "women", participants: 22, winners: ["Boryana"]}, 
+		{length: 6, category: "men", participants: 55, winners: ["Stanimir", "Spas"]}, 
+		{length: 2, category: "kids", participants: 36, winners: ["Aleksandar"]}
+		],
+	donationPerKm: 2,
+	sponsor: "Fake Sponsor",
+})
+
+db.donation.insert({
+	name: "Go!", 
+	location: "Ihtiman", 
+	distances: [
+		{length: 2, category: "women", participants: 56, winners: ["Eva", "Petya"]}, 
+		{length: 5, category: "men", participants: 43, winners: ["Dimitar"]}, 
+		{length: 4, category: "kids", participants: 32, winners: ["Ivaylo"]}
+		],
+	donationPerKm: 3,
+	sponsor: "Company INC",
+})
+
+db.donation.insert({
+	name: "Runners", 
+	location: "Sofia", 
+	distances: [
+		{length: 2, category: "women", participants: 25, winners: ["Elena"]}, 
+		{length: 7, category: "men", participants: 36, winners: ["Spas"]}, 
+		{length: 1, category: "kids", participants: 52, winners: ["Stoyan", "Svetoslav"]}
+		],
+	donationPerKm: 2.5,
+	sponsor: "BIG",
+})
+
+db.donation.insert({
+	name: "Tour", 
+	location: "Veliko Tarnovo", 
+	distances: [
+		{length: 3, category: "women", participants: 45, winners: ["Eva"]}, 
+		{length: 5, category: "men", participants: 63, winners: ["Kiril"]}, 
+		{length: 2, category: "kids", participants: 15, winners: ["Angel"]}
+		],
+	donationPerKm: 1,
+	sponsor: "BIG",
+})
+
+db.donation.aggregate([
+						{$unwind: "$distances"},
+						{$project: {
+							donation: {$multiply: ["$distances.length", "$donationPerKm", "$distances.participants"]}}
+						},
+						{$group: {
+							_id: "$_id",
+							total: {$sum: "$donation"}}
+						},
+						{$sort: {total: -1}},
+						{$limit: 3}
+					])
+			
+db.donation.aggregate([{$unwind: "$distances"},
+					   {$unwind: "$distances.winners"},
+					   {$group: {_id: "$distances.winners", locations: {$addToSet: "$location"}, countOfRaces: {$sum: 1}}}])
